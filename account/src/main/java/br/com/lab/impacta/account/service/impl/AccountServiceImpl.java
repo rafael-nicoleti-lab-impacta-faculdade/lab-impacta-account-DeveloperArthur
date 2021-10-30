@@ -1,6 +1,7 @@
 package br.com.lab.impacta.account.service.impl;
 
 import br.com.lab.impacta.account.handler.exception.AccountDontExistsException;
+import br.com.lab.impacta.account.handler.exception.AccountWithoutDebit;
 import br.com.lab.impacta.account.model.Account;
 import br.com.lab.impacta.account.repository.AccountRepository;
 import br.com.lab.impacta.account.service.AccountService;
@@ -31,6 +32,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void debitAccount(Long id, Double valueOfDebit) {
-
+        Account account = this.findAccount(id);
+        boolean debited = account.debit(valueOfDebit);
+        if (!debited) throw new AccountWithoutDebit(messageExceptionWithoutBalance);
+        accountRepository.save(account);
     }
 }
